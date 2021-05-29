@@ -1,0 +1,24 @@
+{% set title="Register" %}
+{% extends "base.html" %}
+
+{% block content %}
+
+  <form method=POST>
+    <p> Please register with a valid e-mail and strong password </p>
+    {% for field in form %}
+      <p>
+        {% if not field.flags.hidden %}
+        {{ field.label }}
+        {% endif %}
+        {{ field }}
+
+        {% for err in field.errors %}
+          <p> {{ err }} </p>
+        {% endfor %}
+      </p>
+    {% endfor %}
+
+    <input type=submit value="Register!">
+  </form>
+
+{% endblock %}

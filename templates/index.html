@@ -1,0 +1,18 @@
+{% set title="List the game you'd like us to play!" %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <h2> Game suggestions </h2>
+  {% for game in games %}
+    <p>
+      {{ game.title }} <br> 
+      {{ game.platform }} <br>
+      {{ game.onsale }} <br>
+      {{ game.bywhom }} <br>
+      {{ game.comment }} <br>
+      <a href="/game/{{ game.id }}/edit">Edit Entry</a>
+      <a href="/game/{{ game.id }}/delete">Delete</a>
+    </p>
+  {% endfor %}
+{% endblock content %}
