@@ -1,5 +1,6 @@
 from flask import Flask, render_template, flash, redirect, session
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime, date
 from flask_wtf import FlaskForm
 from wtforms.ext.sqlalchemy.orm import model_form
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -17,6 +18,7 @@ class Game(db.Model):
   price = db.Column(db.Float, nullable=False) 
   discount = db.Column(db.String, nullable=True)
   bywhom = db.Column(db.String, nullable=False)
+  added = db.Column(db.Date, nullable=True) #sale_ends db.DateTime, nullable=False, default=datetime.utcnow)
   comment = db.Column(db.Text, nullable=True)
 
 GameForm = model_form(Game, base_class=FlaskForm, db_session=db.session)
@@ -84,7 +86,7 @@ def registerView():
 
       db.session.add(user)
       db.session.commit()
-      flash("Register")
+      flash("User creation succesful!")
       return redirect("/user/login")
 
   return render_template("register.html", form=form)
@@ -141,7 +143,8 @@ def deleteView(id):
 
 @app.route("/")
 def indexView():
-  games = Game.query.all()
+  games = Game.query.order_by(Game.title) #Game.added
+  #games = Game.query.all()
   return render_template("index.html", games=games)
 
 if __name__=="__main__":
