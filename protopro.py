@@ -13,7 +13,7 @@ class Game(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   title = db.Column(db.String, nullable=False)
   platform = db.Column(db.String, nullable=False)
-  onsale = db.Column(db.String, nullable=True)
+  onsale = db.Column(db.Boolean, nullable=True, default=True)
   price = db.Column(db.Float, nullable=False) 
   discount = db.Column(db.String, nullable=True)
   bywhom = db.Column(db.String, nullable=False)
@@ -99,10 +99,10 @@ def logoutView():
 def initDb():
   db.create_all()
 
-  game = Game(title="Lost Planet 2", platform="Xbox 360", onsale="yes", price="4.95", discount="75%", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
+  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75%", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
   db.session.add(game)
 
-  game = Game(title="Among US", platform="PC", onsale="no", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
+  game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
   db.session.add(game)
 
   db.session.commit()
