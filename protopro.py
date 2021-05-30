@@ -38,6 +38,27 @@ class UserForm(FlaskForm):
   email = StringField("email", validators=[validators.Email()])
   password = PasswordField("password", validators=[validators.InputRequired()])
 
+@app.before_first_request
+def initDb():
+  db.create_all()
+
+  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75%", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
+  db.session.add(game)
+
+  game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
+  db.session.add(game)
+
+  db.session.commit()
+
+##user helpers
+@app.errorhandler(403)
+def custom403(e):
+  return redirect("/login")
+
+@app.errorhandler(404)
+def custom404(e):
+  return render_template("404.html")
+
 def currentUser():
   try:
     uid = int(session["uid"])
@@ -47,6 +68,11 @@ def currentUser():
 
 app.jinja_env.globals["currentUser"] = currentUser
 
+def loginRequired():
+  if not currentUser():
+    abort(403)
+
+#user
 @app.route("/user/login", methods =["GET", "POST"])
 def loginView():
   form = UserForm()
@@ -101,21 +127,11 @@ def logoutView():
 def initDb():
   db.create_all()
 
-  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75%", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
-  db.session.add(game)
-
-  game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
-  db.session.add(game)
-
-  db.session.commit()
-
-@app.errorhandler(404)
-def custom404(e):
-  return render_template("404.html")
-
+#game
 @app.route("/game/<int:id>/edit", methods=["GET", "POST"])
 @app.route ("/game/add", methods=["GET", "POST"])
 def addView(id=None):
+  loginRequired()
   game = Game()
   if id:
     game = Game.query.get_or_404(id)
@@ -134,6 +150,7 @@ def addView(id=None):
 
 @app.route("/game/<int:id>/delete")
 def deleteView(id):
+  loginRequired()
   game = Game.query.get_or_404(id)
   db.session.delete(game)
   db.session.commit()
