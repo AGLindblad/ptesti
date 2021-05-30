@@ -16,9 +16,10 @@ class Game(db.Model):
   platform = db.Column(db.String, nullable=False)
   onsale = db.Column(db.Boolean, nullable=True, default=True)
   price = db.Column(db.Float, nullable=False) 
-  discount = db.Column(db.String, nullable=True)
+  discount = db.Column(db.Integer, nullable=True)
   bywhom = db.Column(db.String, nullable=False)
-  added = db.Column(db.Date, nullable=True) #sale_ends db.DateTime, nullable=False, default=datetime.utcnow)
+  sale_ends_in_UTC = db.Column(db.Date, nullable=True)
+  added_autofilled =  db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
   comment = db.Column(db.Text, nullable=True)
 
 GameForm = model_form(Game, base_class=FlaskForm, db_session=db.session)
@@ -42,7 +43,7 @@ class UserForm(FlaskForm):
 def initDb():
   db.create_all()
 
-  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75%", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
+  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
   db.session.add(game)
 
   game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
@@ -53,7 +54,7 @@ def initDb():
 ##user helpers
 @app.errorhandler(403)
 def custom403(e):
-  return redirect("/login")
+  return redirect("/user/login")
 
 @app.errorhandler(404)
 def custom404(e):
@@ -160,7 +161,7 @@ def deleteView(id):
 
 @app.route("/")
 def indexView():
-  games = Game.query.order_by(Game.title) #Game.added
+  games = Game.query.order_by(Game.added_autofilled.desc())  #Game.title
   #games = Game.query.all()
   return render_template("index.html", games=games)
 

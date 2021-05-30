@@ -13,14 +13,14 @@
 
   <body>
     <nav>
-      <a href="/">Home</a>
+      <a href="/">Home</a> &nbsp;
       {% if currentUser() %}
-        <a href="/game/add">Add a game  </a>
-        <a href="/user/logout">Log out </a>
+        <a href="/game/add">Add a game  </a> &nbsp;
+        <a href="/user/logout">Log out </a> &nbsp;
         <a> Welcome, </a>
-        {{ currentUser().email }}
+        <strong> {{ currentUser().email }} </strong>
       {% else %}
-        <a href="/user/login">Login </a>
+        <a href="/user/login">Login </a> &nbsp;
         <a href="/user/register">Register </a>
       {% endif %}
     </nav>
