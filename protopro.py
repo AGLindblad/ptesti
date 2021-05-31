@@ -1,4 +1,4 @@
-from flask import Flask, render_template, flash, redirect, session
+from flask import Flask, render_template, flash, redirect, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
 from flask_wtf import FlaskForm
@@ -22,7 +22,7 @@ class Game(db.Model):
   added_autofilled =  db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
   comment = db.Column(db.Text, nullable=True)
 
-GameForm = model_form(Game, base_class=FlaskForm, db_session=db.session)
+GameForm = model_form(Game, base_class=FlaskForm, exclude=["added_autofilled"], db_session=db.session)
 
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
