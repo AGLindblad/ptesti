@@ -8,6 +8,7 @@ from wtforms import StringField, PasswordField, validators
 
 app = Flask(__name__)
 app.secret_key = "ohpiH5ahy7ohg%u4ieb%aep5aehaos"
+app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql:///anders'
 db = SQLAlchemy(app)
 
 class Game(db.Model):
@@ -15,7 +16,7 @@ class Game(db.Model):
   title = db.Column(db.String, nullable=False)
   platform = db.Column(db.String, nullable=False)
   onsale = db.Column(db.Boolean, nullable=True, default=True)
-  price = db.Column(db.Float, nullable=False) 
+  price = db.Column(db.Float, nullable=False)
   discount = db.Column(db.Integer, nullable=True)
   bywhom = db.Column(db.String, nullable=False)
   sale_ends_in_UTC = db.Column(db.Date, nullable=True)
@@ -43,13 +44,13 @@ class UserForm(FlaskForm):
 def initDb():
   db.create_all()
 
-  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
-  db.session.add(game)
+#  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
+#  db.session.add(game)
 
-  game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
-  db.session.add(game)
+# game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
+# db.session.add(game)
 
-  db.session.commit()
+# db.session.commit()
 
 ##user helpers
 @app.errorhandler(403)
