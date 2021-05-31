@@ -1,0 +1,42 @@
+  if  form.validate_on_submit():
+        if form.validate_on_submit():
+          if form.key.data !="excelsior":
+            flash("Sorry, that is not the right key")
+            return redirect("register")
+      email = form.email.data
+      password = form.password.data
+
+      if User.query.filter_by(email=email).first():
+        flash("User alreday exists - please log in!")
+        return redirect("/user/login")
+
+      user = User(email=email)
+      user.setPassword(password)
+
+      db.session.add(user)
+      db.session.commit()
+      flash("User creation succesful!")
+      return redirect("/user/login")
+
+{% set title="List the game you'd like us to play!" %}
+
+{% extends "base.html" %}
+
+{% block content %}
+  <h2> Game suggestions </h2>
+  {% for game in games %}
+    <p>
+      {{ game.title }} <br>
+      {{ game.platform }} <br>
+      {{ game.onsale }} <br>
+      {{ game.price }} <br>
+      {{ game.discount }} % <br>
+      {{ game.bywhom }} <br>
+      {{ game.sale_ends_in_UTC }} <br>
+      {{ game.comment }} <br>
+      <a href="/game/{{ game.id }}/edit">Edit Entry</a>
+      <a href="/game/{{ game.id }}/delete">Delete</a>
+    </p>
+  {% endfor %}
+{% endblock content %}
+

@@ -25,6 +25,18 @@ class Game(db.Model):
 
 GameForm = model_form(Game, base_class=FlaskForm, exclude=["added_autofilled"], db_session=db.session)
 
+app.before_first_request
+def initDb():
+  db.create_all()
+
+#  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
+#  db.session.add(game)
+
+# game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
+# db.session.add(game)
+
+# db.session.commit()
+
 class User(db.Model):
   id = db.Column(db.Integer, primary_key=True)
   email = db.Column(db.String, nullable=False, unique=True)
@@ -40,19 +52,9 @@ class UserForm(FlaskForm):
   email = StringField("email", validators=[validators.Email()])
   password = PasswordField("password", validators=[validators.InputRequired()])
 
-@app.before_first_request
-def initDb():
-  db.create_all()
+class RegisterForm(UserForm):
+  key = StringField("registration key", validators=[validators.InputRequired()])
 
-#  game = Game(title="Lost Planet 2", platform="Xbox 360", price="4.95", discount="75", bywhom="Jay", comment="Seems like a good 4-player title, should we grab it?")
-#  db.session.add(game)
-
-# game = Game(title="Among US", platform="PC", price="3.95", bywhom="Ben", comment="It's a new release, would you guys be willing to play it with me?")
-# db.session.add(game)
-
-# db.session.commit()
-
-##user helpers
 @app.errorhandler(403)
 def custom403(e):
   return redirect("/user/login")
@@ -99,7 +101,7 @@ def loginView():
 
 @app.route("/user/register", methods=["GET", "POST"])
 def registerView():
-  form = UserForm()
+  form = RegisterForm()
 
   if  form.validate_on_submit():
       email = form.email.data
@@ -109,15 +111,20 @@ def registerView():
         flash("User alreday exists - please log in!")
         return redirect("/user/login")
 
+      if form.key.data !="excelsior":
+        flash("Sorry, wrong key")
+        return redirect("/user/register")
+
       user = User(email=email)
       user.setPassword(password)
 
       db.session.add(user)
       db.session.commit()
-      flash("User creation succesful!")
+      flash("Register")
       return redirect("/user/login")
 
   return render_template("register.html", form=form)
+
 
 @app.route("/user/logout")
 def logoutView():
